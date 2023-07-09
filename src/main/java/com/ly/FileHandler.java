@@ -26,11 +26,11 @@ public class FileHandler {
                         System.out.println("找到文件夹:" + dir2.getAbsolutePath());
                         //遍历文件夹下的所有文件
                         File[] files  = dir2.listFiles();
+                        boolean hasName=false;
+                        boolean hasFile=false;
                         for(int m=0;m<files.length;m++){
                             File file=files[m];
                             String fileName = file.getName();
-                            boolean hasName=false;
-                            boolean hasFile=false;
                             if(fileName.contains(".info")){
                                 //解析出文件名
                                 fileNames.add("文件名");
@@ -40,15 +40,15 @@ public class FileHandler {
                                 filePaths.add(file.getAbsolutePath());
                                 hasFile=true;
                             }
-                            //如果有一个不存在
-                            //保证文件名和文件路径成对出现
-                            if(!hasName||!hasFile){
-                                if(!hasName){
-                                    fileNames.add("");
-                                }
-                                if(!hasFile){
-                                    filePaths.add("");
-                                }
+                        }
+                        //如果有一个不存在
+                        //保证文件名和文件路径成对出现
+                        if(!hasName||!hasFile){
+                            if(!hasName){
+                                fileNames.add("");
+                            }
+                            if(!hasFile){
+                                filePaths.add("");
                             }
                         }
                     }
