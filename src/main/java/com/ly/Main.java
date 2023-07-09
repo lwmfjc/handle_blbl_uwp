@@ -11,8 +11,8 @@ public class Main {
         log.info("当前目录:{}",curDir);
        long timeBegin = new Date().getTime();
         FileHandler fileHandler = new FileHandler();
-        fileHandler.handle("D:\\Users\\ly\\Documents\\git\\handle_blbl_wap\\vedio");
-        //fileHandler.handle(curDir);
+        //fileHandler.handle("D:\\Users\\ly\\Documents\\git\\handle_blbl_wap\\vedio");
+        fileHandler.handle(curDir);
         long timeEnd = new Date().getTime();
         log.info("耗时{}秒", (timeEnd - timeBegin) / 1000);
     }

@@ -115,7 +115,7 @@ public class FileHandler {
                 log.info("正在处理加密文件");
                 //如果读取了三个,就将输入流剩下的字节输出到另一个文件中
                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePathNew));
-                byte[] bytes = new byte[1024];
+                byte[] bytes = new byte[1024 * 200];
                 //读取到的字节数
                 int readLength = inputStream.read(bytes);
                 int totalWrite = 0;
@@ -131,7 +131,7 @@ public class FileHandler {
                 outputStream.close();
                 //关闭输入流
                 inputStream.close();
-                file.deleteOnExit();
+                //file.deleteOnExit();
                 success = true;
             }
         } catch (IOException e) {
