@@ -20,7 +20,7 @@ public class FileHandler {
     private ArrayList<String> filePaths = new ArrayList<>();
 
     //获取所有的
-    private void getAllFileMp4Dir(String baseDirPath) {
+    private void handleAllFileMp4Dir(String baseDirPath) {
         File baseDir = new File(baseDirPath);
         //如果是文件夹，进行遍历
         if (baseDir.isDirectory()) {
@@ -142,7 +142,8 @@ public class FileHandler {
         return success;
     }
 
-    public void handle() {
+    public void handle(String baseDirPath) {
+        this.handleAllFileMp4Dir(baseDirPath);
 
         int nameSize = fileNames.size();
         int pathSize = filePaths.size();
@@ -191,12 +192,13 @@ public class FileHandler {
         }
     }
 
-    public static void main(String[] args) {
-        long timeBegin = new Date().getTime();
+/*    public static void main(String[] args) {
+        log.info("当前目录:{}",System.getProperty("user.dir"));
+        *//*long timeBegin = new Date().getTime();
         FileHandler fileHandler = new FileHandler();
         fileHandler.getAllFileMp4Dir("D:\\Users\\ly\\Documents\\git\\handle_blbl_wap\\vedio");
         fileHandler.handle();
         long timeEnd = new Date().getTime();
-        log.info("耗时{}秒", (timeEnd - timeBegin) / 1000);
-    }
+        log.info("耗时{}秒", (timeEnd - timeBegin) / 1000);*//*
+    }*/
 }
