@@ -1,5 +1,5 @@
-# handle_blbl_wap
-处理wap版的bilibili加密问题
+# handle_blbl_uwp
+处理uwp版的bilibili加密问题
 (处理 ss21288\336713871\1\xxx.mp4 
  或336713871\1\xxx.mp4)这种结构的文件夹下的mp4
 1\任意字符.mp4 为待解密视频文件
