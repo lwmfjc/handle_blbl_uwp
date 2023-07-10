@@ -26,7 +26,7 @@ public class Main {
         } else {
             return;
         }
-        //fileHandler.handle("D:\\Users\\ly\\Documents\\git\\handle_blbl_wap\\vedio");
+        //fileHandler.handle("E:\\vedio\\3674173");
         fileHandler.handle(curDir);
         long timeEnd = new Date().getTime();
         log.info("耗时{}秒", (timeEnd - timeBegin) / 1000);

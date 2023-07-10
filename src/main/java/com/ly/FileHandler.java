@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -169,8 +173,18 @@ public class FileHandler {
                 }
             }
             //如果是加密文件
-            if (3 == num) {
-                log.info("正在处理加密文件");
+            if (3 != num) {
+                //如果不是加密文件,重新打开输入流
+                inputStream.close();
+                inputStream = new BufferedInputStream(new FileInputStream(file));
+                log.info("正在处理非加密文件:{}",filePathNew);
+                /*log.info("不是加密文件,移动{}到{}",
+                        file.getAbsolutePath(),filePathNew);
+                Files.copy(Paths.get(file.getAbsolutePath()),Paths.get(filePathNew)
+                , StandardCopyOption.REPLACE_EXISTING);*/
+            } else {
+                log.info("正在处理加密文件:{}",filePathNew);
+            }
                 //如果读取了三个,就将输入流剩下的字节输出到另一个文件中
                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePathNew));
                 byte[] bytes = new byte[1024 * 200];
@@ -191,7 +205,7 @@ public class FileHandler {
                 inputStream.close();
                 //file.deleteOnExit();
                 success = true;
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -251,7 +265,7 @@ public class FileHandler {
         }
     }
 
-    private void printAllInfo() {
+    public void printAllInfo() {
         int nameSize = fileNames.size();
         int pathSize = filePaths.size();
         //如果长度一致
