@@ -201,7 +201,12 @@ public class FileHandler {
     }
 
     public void handle(String baseDirPath) {
-        this.handleAllFileMp4Dir(baseDirPath);
+
+        if (decryType == 0) {
+            this.handleAllFileMp4DirSimple(baseDirPath);
+        } else if (decryType == 1) {
+            this.handleAllFileMp4Dir(baseDirPath);
+        }
 
         int nameSize = fileNames.size();
         int pathSize = filePaths.size();
