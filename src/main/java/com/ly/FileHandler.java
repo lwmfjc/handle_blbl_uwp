@@ -18,6 +18,8 @@ public class FileHandler {
     private ArrayList<String> fileNames = new ArrayList<>();
     //所有文件的文件地址
     private ArrayList<String> filePaths = new ArrayList<>();
+    //输出文件夹地址
+    private String outDir=System.getProperty("user.dir")+File.separator+"decrypt";
 
     //获取所有的
     private void handleAllFileMp4Dir(String baseDirPath) {
@@ -148,11 +150,19 @@ public class FileHandler {
         int nameSize = fileNames.size();
         int pathSize = filePaths.size();
         int cpuNums = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(cpuNums * 2);
+        ExecutorService executorService = Executors.newFixedThreadPool(cpuNums * 2 * 4);
 
         //如果长度一致
         if (nameSize == pathSize) {
             for (int n = 0; n < nameSize; n++) {
+                if(n==0){
+                    File file=new File(outDir);
+                    //如果存在这个目录
+                    if(file.mkdirs()){
+                       log.info("文件夹创建成功");
+                    }
+                }
+
                 String filePath = filePaths.get(n);
                 String fileName = fileNames.get(n);
                 File file = new File(filePath);
@@ -162,7 +172,7 @@ public class FileHandler {
                 if (fileNameOld.equals(fileNameNew)) {
                     fileNameNew = fileName + (new Date().getTime()) + ".mp4";
                 }
-                String filePathNew = filePath.replaceFirst(fileNameOld, fileNameNew);
+                String filePathNew = outDir+File.separator+fileNameNew;//filePath.replaceFirst(fileNameOld, fileNameNew);
                 log.info("文件地址: {} ,旧文件名：{}，新文件名: {} ,新文件地址：{}", filePath, fileNameOld,
                         fileName, filePathNew);
                 executorService.submit(()->{
