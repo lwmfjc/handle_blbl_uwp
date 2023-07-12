@@ -7,11 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +26,8 @@ public class FileHandler {
     private String outDir = System.getProperty("user.dir") + File.separator + "decrypt";
     //类型
     private int decryType = 0;//0:简单 1:复杂
-    private String mySetDate = null; //"1999-01-01 00:00:00";
+    private String myDateStart = "1900-01-01 00:00:00";
+    private String myDateEnd = "9999-12-31 23:59:59";
 
     //获取所有的
     private void handleAllFileMp4DirSimple(String baseDirPath) {
@@ -113,29 +110,31 @@ public class FileHandler {
                                 numName++;
                             } else if (fileName.contains(".mp4")) {
                                 //是否是正确的文件
-                                boolean isCorrectFile=true;
+                                boolean isCorrectFile = true;
                                 //判断文件最后修改时间是否在设定时间之前
-                                if(mySetDate!=null) {
-                                    SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                    String fileDateStr = myFormat.format(file.lastModified());
-                                    long time = 0L;//我设定的时间的long
-                                    try {
-                                        time = myFormat.parse(mySetDate).getTime();
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                    log.info("修改时间{} {} 设定时间{}", fileDateStr, file.lastModified() - time > 0 ? ">" : "<", mySetDate);
-                                    if(file.lastModified() - time > 0){
-                                        isCorrectFile=false;
-                                    }
+                                //if(mySetDate!=null) {
+                                SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String fileDateStr = myFormat.format(file.lastModified());
+                                long timeStart = 0L;//我设定的开始时间的long
+                                long timeEnd = 0L;//我设定的结束时间的long
+                                try {
+                                    timeStart = myFormat.parse(myDateStart).getTime();
+                                    timeEnd = myFormat.parse(myDateEnd).getTime();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
-                                if(!isCorrectFile){
-                                    continue;
+                                //文件修改时间是否大于等于 "设定的开始时间"
+                                boolean isLargerStart = file.lastModified() - timeStart >= 0;
+                                //文件修改时间是否小于 "设定的结束时间"
+                                boolean isSmallerEnd = file.lastModified() - timeEnd < 0;
+                                log.info("修改时间{} {} 设定时间开始{}", fileDateStr, isLargerStart ? ">=" : "<", myDateStart);
+                                log.info("修改时间{} {} 设定时间结束{}", fileDateStr, isSmallerEnd ? "<" : ">", myDateEnd);
+                                //条件同时满足则进行解析
+                                if (isLargerStart && isSmallerEnd) {
+                                    //添加文件地址
+                                    filePaths.add(file.getAbsolutePath());
+                                    numFile++;
                                 }
-
-                                //添加文件地址
-                                filePaths.add(file.getAbsolutePath());
-                                numFile++;
                             }
                         }
                         //保证是成对的
@@ -264,6 +263,10 @@ public class FileHandler {
 
                 String filePath = filePaths.get(n);
                 String fileName = fileNames.get(n);
+                //如果文件不存在,则不处理
+                if("".equals(filePath)||"".equals(fileName)){
+                    continue;
+                }
                 File file = new File(filePath);
                 String fileNameOld = file.getName();
                 String fileNameNew = fileName + ".mp4";
