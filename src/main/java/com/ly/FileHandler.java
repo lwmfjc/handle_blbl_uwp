@@ -229,8 +229,7 @@ public class FileHandler {
             //file.deleteOnExit();
 
             //写入完成后创建同名文件夹
-            String filePathComplete = filePathNew.replaceAll("mp4", "");
-            filePathComplete = filePathComplete.replaceAll("decrypt", "decryptComplete");
+            String filePathComplete = filePathNew.replaceAll("decrypt", "decryptComplete");
             File fileComplete = new File(filePathComplete);
             //创建一个新文件表示解密成功
             fileComplete.mkdirs();
