@@ -227,6 +227,14 @@ public class FileHandler {
             //关闭输入流
             inputStream.close();
             //file.deleteOnExit();
+
+            //写入完成后创建同名文件夹
+            String filePathComplete = filePathNew.replaceAll("mp4", "");
+            filePathComplete = filePathComplete.replaceAll("decrypt", "decryptComplete");
+            File fileComplete = new File(filePathComplete);
+            //创建一个新文件表示解密成功
+            fileComplete.mkdirs();
+
             success = true;
 
         } catch (IOException e) {
