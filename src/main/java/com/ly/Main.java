@@ -3,6 +3,7 @@ package com.ly;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,9 @@ public class Main {
         log.info("当前目录:{}", curDir);
         long timeBegin = new Date().getTime();
         FileHandler fileHandler = new FileHandler();
+        //只解析在这个修改时间之前的mp4
+        fileHandler.setMySetDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        //fileHandler.setMySetDate("2023-07-12 03:00:00");
         //判断以什么模式解密
         int index = curDir.lastIndexOf(File.separator);
         if (index != -1) {

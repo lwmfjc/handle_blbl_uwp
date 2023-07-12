@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +30,7 @@ public class FileHandler {
     private String outDir = System.getProperty("user.dir") + File.separator + "decrypt";
     //类型
     private int decryType = 0;//0:简单 1:复杂
+    private String mySetDate = null; //"1999-01-01 00:00:00";
 
     //获取所有的
     private void handleAllFileMp4DirSimple(String baseDirPath) {
@@ -109,6 +112,27 @@ public class FileHandler {
                                 fileNames.add(fileNameNew);
                                 numName++;
                             } else if (fileName.contains(".mp4")) {
+                                //是否是正确的文件
+                                boolean isCorrectFile=true;
+                                //判断文件最后修改时间是否在设定时间之前
+                                if(mySetDate!=null) {
+                                    SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String fileDateStr = myFormat.format(file.lastModified());
+                                    long time = 0L;//我设定的时间的long
+                                    try {
+                                        time = myFormat.parse(mySetDate).getTime();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    log.info("修改时间{} {} 设定时间{}", fileDateStr, file.lastModified() - time > 0 ? ">" : "<", mySetDate);
+                                    if(file.lastModified() - time > 0){
+                                        isCorrectFile=false;
+                                    }
+                                }
+                                if(!isCorrectFile){
+                                    continue;
+                                }
+
                                 //添加文件地址
                                 filePaths.add(file.getAbsolutePath());
                                 numFile++;
@@ -177,34 +201,34 @@ public class FileHandler {
                 //如果不是加密文件,重新打开输入流
                 inputStream.close();
                 inputStream = new BufferedInputStream(new FileInputStream(file));
-                log.info("正在处理非加密文件:{}",filePathNew);
+                log.info("正在处理非加密文件:{}", filePathNew);
                 /*log.info("不是加密文件,移动{}到{}",
                         file.getAbsolutePath(),filePathNew);
                 Files.copy(Paths.get(file.getAbsolutePath()),Paths.get(filePathNew)
                 , StandardCopyOption.REPLACE_EXISTING);*/
             } else {
-                log.info("正在处理加密文件:{}",filePathNew);
+                log.info("正在处理加密文件:{}", filePathNew);
             }
-                //如果读取了三个,就将输入流剩下的字节输出到另一个文件中
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePathNew));
-                byte[] bytes = new byte[1024 * 200];
-                //读取到的字节数
-                int readLength = inputStream.read(bytes);
-                int totalWrite = 0;
-                long length = file.length();
-                while (readLength != -1) {
-                    outputStream.write(bytes, 0, readLength);
-                    totalWrite += readLength;
-                    log.info("{} 总共写入:{},文件大小:{},写入百分比:{}%", filePathNew, totalWrite, length, totalWrite * 100L / length);
-                    readLength = inputStream.read(bytes);
-                }
-                outputStream.flush();
-                //关闭输出流
-                outputStream.close();
-                //关闭输入流
-                inputStream.close();
-                //file.deleteOnExit();
-                success = true;
+            //如果读取了三个,就将输入流剩下的字节输出到另一个文件中
+            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePathNew));
+            byte[] bytes = new byte[1024 * 200];
+            //读取到的字节数
+            int readLength = inputStream.read(bytes);
+            int totalWrite = 0;
+            long length = file.length();
+            while (readLength != -1) {
+                outputStream.write(bytes, 0, readLength);
+                totalWrite += readLength;
+                log.info("{} 总共写入:{},文件大小:{},写入百分比:{}%", filePathNew, totalWrite, length, totalWrite * 100L / length);
+                readLength = inputStream.read(bytes);
+            }
+            outputStream.flush();
+            //关闭输出流
+            outputStream.close();
+            //关闭输入流
+            inputStream.close();
+            //file.deleteOnExit();
+            success = true;
 
         } catch (IOException e) {
             e.printStackTrace();
