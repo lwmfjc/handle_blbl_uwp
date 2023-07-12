@@ -16,8 +16,8 @@ public class Main {
         long timeBegin = new Date().getTime();
         FileHandler fileHandler = new FileHandler();
         //只解析在这个修改时间之前的mp4
-        fileHandler.setMyDateStart("2023-07-12 00:40:00");
-        fileHandler.setMyDateEnd("2023-07-12 08:17:00");
+        //fileHandler.setMyDateStart("2023-07-12 00:40:00");
+        //fileHandler.setMyDateEnd("2023-07-12 08:17:00");
         //fileHandler.setMySetDate("2023-07-12 03:00:00");
         //判断以什么模式解密
         int index = curDir.lastIndexOf(File.separator);
