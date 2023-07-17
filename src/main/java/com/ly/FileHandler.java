@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,6 +22,9 @@ import java.util.concurrent.Executors;
 public class FileHandler {
     //所有文件的文件名
     private ArrayList<String> fileNames = new ArrayList<>();
+    //已完成文件的文件名
+    private Set<String> completeFileNames = new HashSet<>();
+
     //所有文件的文件地址
     private ArrayList<String> filePaths = new ArrayList<>();
     //输出文件夹地址
@@ -73,6 +78,16 @@ public class FileHandler {
                             for (int x = 0; x < differ; x++) {
                                 fileNames.add(fileNameNew);
                             }
+                        }
+                    }
+
+                    boolean exist = completeFileNames.contains(fileNameNew+".mp4");
+                    //已经解析了,则删除
+                    if (exist) {
+                        int i = fileNames.indexOf(fileNameNew);
+                        if(-1 != i ) {
+                            fileNames.remove(i);
+                            filePaths.remove(i);
                         }
                     }
 
@@ -151,6 +166,16 @@ public class FileHandler {
                                 for (int x = 0; x < differ; x++) {
                                     fileNames.add(fileNameNew);
                                 }
+                            }
+                        }
+
+                        boolean exist = completeFileNames.contains(fileNameNew+".mp4");
+                        //已经解析了,则删除
+                        if (exist) {
+                            int i = fileNames.indexOf(fileNameNew);
+                            if(-1 != i ) {
+                                fileNames.remove(i);
+                                filePaths.remove(i);
                             }
                         }
                     }
@@ -244,8 +269,21 @@ public class FileHandler {
         return success;
     }
 
-    public void handle(String baseDirPath) {
+    private void getAllCompleteFileNames(String baseDirPath) {
+        File baseDir = new File(baseDirPath + File.separator + "decryptComplete");
+        //如果是文件夹，进行遍历
+        if (baseDir.isDirectory()) {
+            File[] fileDirs = baseDir.listFiles();
+            for (File f : fileDirs) {
+                if (f.isDirectory()) {
+                    completeFileNames.add(f.getName());
+                }
+            }
+        }
+    }
 
+    public void handle(String baseDirPath) {
+        getAllCompleteFileNames(baseDirPath);
         if (decryType == 0) {
             this.handleAllFileMp4DirSimple(baseDirPath);
         } else if (decryType == 1) {
@@ -271,7 +309,7 @@ public class FileHandler {
                 String filePath = filePaths.get(n);
                 String fileName = fileNames.get(n);
                 //如果文件不存在,则不处理
-                if("".equals(filePath)||"".equals(fileName)){
+                if ("".equals(filePath) || "".equals(fileName)) {
                     continue;
                 }
                 File file = new File(filePath);
